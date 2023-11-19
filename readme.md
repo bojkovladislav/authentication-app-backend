@@ -20,8 +20,8 @@ This Node.js backend project provides authentication functionalities, including 
 
 - Node.js
 - Express.js
-- MongoDB (or your preferred database)
-- Mongoose (or your preferred ODM/ORM)
+- MongoDB
+- Mongoose
 - bcryptjs for password hashing
 - JSON Web Tokens (JWT) for authentication
 - Passport.js for Google OAuth integration
