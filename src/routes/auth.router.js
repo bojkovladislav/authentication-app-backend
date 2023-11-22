@@ -15,36 +15,36 @@ authRouter.get(
   catchError(authController.activate)
 );
 authRouter.post('/login', catchError(authController.login));
-authRouter.post('/logout/:userId', catchError(authController.logout));
+authRouter.get('/logout/:userId', catchError(authController.logout));
 authRouter.get('/refresh', catchError(authController.refresh));
 authRouter.post('/forgot-password', catchError(authController.forgotPassword));
 
-authRouter.get(
+authRouter.patch(
   '/reset-password/:resetToken',
   catchError(authController.resetPassword)
 );
 
 authRouter.patch(
   '/update-name/:id',
-  catchError(authMiddleware),
+  // catchError(authMiddleware),
   catchError(authController.updateName)
 );
 
 authRouter.patch(
   '/update-password/:id',
-  catchError(authMiddleware),
+  // catchError(authMiddleware),
   catchError(authController.updatePassword)
 );
 
 authRouter.post(
   '/send-confirmation-email/:id',
-  catchError(authMiddleware),
+  // catchError(authMiddleware),
   catchError(authController.sendEmailConfirmation)
 );
 
 authRouter.patch(
   '/update-email/:confirmationToken',
-  catchError(authMiddleware),
+  // catchError(authMiddleware),
   catchError(authController.updateEmail)
 );
 

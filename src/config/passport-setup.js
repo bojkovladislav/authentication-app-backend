@@ -11,7 +11,7 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser(async(id, done) => {
+passport.deserializeUser(async (id, done) => {
   try {
     const foundUser = await userService.getUserById(parseInt(id));
 
@@ -28,7 +28,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: 'http://localhost:3000/auth/google/callback',
     },
-    async(accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       const { name, email } = profile._json;
 
       try {

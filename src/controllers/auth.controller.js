@@ -23,7 +23,7 @@ const getSuccessfulMessage = (user, updatedValueName) => {
   };
 };
 
-const register = async(req, res) => {
+const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -44,7 +44,7 @@ const register = async(req, res) => {
   res.send({ message: "You've been successfully registered!" });
 };
 
-const activate = async(req, res) => {
+const activate = async (req, res) => {
   const { activationToken } = req.params;
 
   const foundUser = await userService.getUserByActivationToken(activationToken);
@@ -62,7 +62,7 @@ const activate = async(req, res) => {
   res.send(foundUser);
 };
 
-const login = async(req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -93,7 +93,7 @@ const login = async(req, res) => {
   await sendAuthentication(res, foundUser);
 };
 
-const logout = async(req, res) => {
+const logout = async (req, res) => {
   const { userId } = req.params;
   const refreshToken = req.cookies[`refreshToken_${userId}`];
   const userData = jwtService.verifyToken(refreshToken, 'JWT_REFRESH_SECRET');
@@ -108,7 +108,7 @@ const logout = async(req, res) => {
   res.sendStatus(204);
 };
 
-const refresh = async(req, res) => {
+const refresh = async (req, res) => {
   const { refreshToken } = req.cookies;
   const userData = jwtService.verifyToken(refreshToken, 'JWT_REFRESH_SECRET');
 
@@ -127,7 +127,7 @@ const refresh = async(req, res) => {
   await sendAuthentication(res, user);
 };
 
-const sendAuthentication = async(res, user) => {
+const sendAuthentication = async (res, user) => {
   const userData = userService.normalize(user);
   const accessToken = jwtService.generateToken(
     userData,
@@ -155,7 +155,7 @@ const sendAuthentication = async(res, user) => {
   });
 };
 
-const forgotPassword = async(req, res) => {
+const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -175,7 +175,7 @@ const forgotPassword = async(req, res) => {
   res.send('Email with password reset has been sent!');
 };
 
-const resetPassword = async(req, res) => {
+const resetPassword = async (req, res) => {
   const { resetToken } = req.params;
   const { newPassword } = req.body;
 
@@ -205,7 +205,7 @@ const resetPassword = async(req, res) => {
   });
 };
 
-const updateName = async(req, res) => {
+const updateName = async (req, res) => {
   const { id } = req.params;
   const { updatedName } = req.body;
 
@@ -228,7 +228,7 @@ const updateName = async(req, res) => {
   res.status(200).send(getSuccessfulMessage(foundUser, 'name'));
 };
 
-const updatePassword = async(req, res) => {
+const updatePassword = async (req, res) => {
   const { id } = req.params;
   const { oldPassword, newPassword, confirmation } = req.body;
 
@@ -269,9 +269,10 @@ const updatePassword = async(req, res) => {
   res.status(200).send(getSuccessfulMessage(foundUser, 'password'));
 };
 
-const sendEmailConfirmation = async(req, res) => {
+const sendEmailConfirmation = async (req, res) => {
   const { id } = req.params;
   const { email, password } = req.body;
+  const errors = {};
 
   if (!email || !password) {
     throw ApiError.badRequest(
@@ -284,24 +285,26 @@ const sendEmailConfirmation = async(req, res) => {
   checkUserExistence(foundUser, id);
 
   if (!(await bcrypt.compare(password, foundUser.password))) {
-    throw ApiError.badRequest('Incorrect password for changing email!');
+    errors.password = 'Incorrect password for changing email!';
   }
 
   if (email === foundUser.email) {
-    throw ApiError.badRequest(
-      'Your new email should be different from your current one!'
-    );
+    errors.email =
+      "'Your new email should be different from your current one!'";
+  }
+
+  if (errors.password || errors.email) {
+    throw ApiError.badRequest('Invalid input data!', errors);
   }
 
   await userService.sendEmailConfirmation(foundUser, email, res);
 
   res.status(200).send({
-    message: `Confirm your new email please!
-        You have been sent an email with confirmation!`,
+    message: `Confirm your new email please! You have been sent an email with confirmation!`,
   });
 };
 
-const updateEmail = async(req, res) => {
+const updateEmail = async (req, res) => {
   const { confirmationToken } = req.params;
 
   if (!confirmationToken) {
@@ -327,6 +330,8 @@ const authorizeWithGoogle = (req, res) => {
     );
   }
 
+  res.redirect('http://localhost:5173/authentication-app/');
+
   res.status(200).send({
     message: 'Authenticated with google!',
     user: {
@@ -337,7 +342,7 @@ const authorizeWithGoogle = (req, res) => {
   });
 };
 
-const logoutWithGoogle = async(req, res) => {
+const logoutWithGoogle = async (req, res) => {
   const { userId } = req.params;
 
   await tokenService.remove(userId);

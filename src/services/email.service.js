@@ -5,8 +5,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const { CLIENT_HOST, SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD }
-  = process.env;
+const { CLIENT_HOST, SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } =
+  process.env;
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
@@ -26,7 +26,7 @@ function send({ email, subject, html }) {
 }
 
 function sendResetLink(email, token) {
-  const href = `${CLIENT_HOST}/reset/${token}`;
+  const href = `${CLIENT_HOST}/authentication-app/#reset-password/${token}`;
 
   const html = `
   <!DOCTYPE html>
@@ -90,7 +90,7 @@ function sendResetLink(email, token) {
 }
 
 function sendConfirmationEmail(name, email, token) {
-  const href = `${CLIENT_HOST}/confirmation/${token}`;
+  const href = `${CLIENT_HOST}/#confirmation/${token}`;
 
   const html = `
     <!DOCTYPE html>
@@ -132,7 +132,7 @@ function sendConfirmationEmail(name, email, token) {
 }
 
 function sendActivationEmail(name, email, token) {
-  const href = `${CLIENT_HOST}/activation/${token}`;
+  const href = `${CLIENT_HOST}/authentication-app/#activate/${token}`;
 
   const html = `
     <!DOCTYPE html>
