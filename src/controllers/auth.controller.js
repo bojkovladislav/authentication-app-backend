@@ -144,9 +144,7 @@ const sendAuthentication = async (res, user) => {
 
   res.cookie(`refreshToken_${user.id}`, refreshToken, {
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+    httpOnly: false,
   });
 
   res.send({
