@@ -132,7 +132,7 @@ function sendConfirmationEmail(name, email, token) {
 }
 
 function sendActivationEmail(name, email, token) {
-  const href = `${CLIENT_HOST}/authentication-app/#activate/${token}`;
+  const href = `${CLIENT_HOST}/#activate/${token}`;
 
   const html = `
     <!DOCTYPE html>
