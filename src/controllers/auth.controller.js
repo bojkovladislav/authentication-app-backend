@@ -144,8 +144,9 @@ const sendAuthentication = async (res, user) => {
 
   res.cookie(`refreshToken_${user.id}`, refreshToken, {
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: false,
+    httpOnly: false,
+    sameSite: 'none',
+    secure: true,
   });
 
   res.send({
@@ -328,8 +329,6 @@ const authorizeWithGoogle = (req, res) => {
       'Something went wrong! Try to authorize with google again'
     );
   }
-
-  res.redirect('http://localhost:5173/authentication-app/');
 
   res.status(200).send({
     message: 'Authenticated with google!',
