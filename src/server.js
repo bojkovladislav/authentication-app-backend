@@ -15,11 +15,11 @@ require('./config/passport-setup.js');
 
 dotenv.config();
 
-const { CLIENT_HOST, SESSION_SECRET } = process.env;
+const { SESSION_SECRET } = process.env;
 
 app.use(
   cors({
-    origin: CLIENT_HOST,
+    origin: '*',
     credentials: true,
   })
 );
