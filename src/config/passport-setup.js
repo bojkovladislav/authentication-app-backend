@@ -4,7 +4,6 @@ const passport = require('passport');
 const { userService } = require('../services/user.service');
 const { User } = require('../models/User');
 const { tokenService } = require('../services/token.service');
-const { ApiError } = require('../exceptions/api.error');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.serializeUser((user, done) => {
@@ -38,7 +37,10 @@ passport.use(
           const isUserAuthorized = await tokenService.getByUserId(user.id);
 
           if (isUserAuthorized) {
-            throw ApiError.badRequest('User with this email already exists!');
+            return done(null, false, {
+              message: 'User with this email already exists!',
+              redirectUrl: 'http://localhost:5173/authentication-app',
+            });
           }
         }
 

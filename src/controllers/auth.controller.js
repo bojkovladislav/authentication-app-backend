@@ -258,7 +258,7 @@ const updatePassword = async (req, res) => {
   }
 
   if (newPassword !== confirmation) {
-    errors.confirmation = 'Passwords do not match; please check and try again'
+    errors.confirmation = 'Passwords do not match; please check and try again';
   }
 
   if (errors.confirmation || errors.oldPassword || errors.newPassword) {
@@ -330,14 +330,18 @@ const authorizeWithGoogle = (req, res) => {
     );
   }
 
-  res.status(200).send({
-    message: 'Authenticated with google!',
-    user: {
-      name: displayName,
-      email: emails[0].value,
-    },
-    accessToken,
-  });
+  res.redirect(
+    `http://localhost:5173/authentication-app/?message=Authenticated%20with%20google&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
+  );
+
+  // res.status(200).send({
+  //   message: 'Authenticated with google!',
+  //   user: {
+  //     name: displayName,
+  //     email: emails[0].value,
+  //   },
+  //   accessToken,
+  // });
 };
 
 const logoutWithGoogle = async (req, res) => {
