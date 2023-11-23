@@ -23,7 +23,7 @@ const getSuccessfulMessage = (user, updatedValueName) => {
   };
 };
 
-const prepareTokens = async (user) => {
+const prepareTokens = async (user, res) => {
   const userData = userService.normalize(user);
   const accessToken = jwtService.generateToken(
     userData,
@@ -153,7 +153,7 @@ const refresh = async (req, res) => {
 };
 
 const sendAuthentication = async (res, user) => {
-  const accessToken = await prepareTokens(user);
+  const accessToken = await prepareTokens(user, res);
 
   res.send({
     user: userData,
@@ -341,7 +341,7 @@ const authorizeWithGoogle = async (req, res) => {
     displayName
   );
 
-  const accessToken = await prepareTokens(newUser);
+  const accessToken = await prepareTokens(newUser, res);
 
   res.redirect(
     `http://localhost:5173/authentication-app/#google-auth/?message=Authenticated%20with%20google&id=${newUser.id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
