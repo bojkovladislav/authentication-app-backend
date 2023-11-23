@@ -4,6 +4,7 @@ const passport = require('passport');
 const { userService } = require('../services/user.service');
 const { User } = require('../models/User');
 const { tokenService } = require('../services/token.service');
+const bcrypt = require('bcrypt');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.serializeUser((user, done) => {
@@ -47,7 +48,7 @@ passport.use(
         const newUser = await User.create({
           name,
           email,
-          password: '123',
+          password: bcrypt.hash('1234567', 10),
         });
 
         await tokenService.save(newUser.id, refreshToken);
