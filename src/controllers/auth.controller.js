@@ -23,6 +23,31 @@ const getSuccessfulMessage = (user, updatedValueName) => {
   };
 };
 
+const prepareTokens = async (user) => {
+  const userData = userService.normalize(user);
+  const accessToken = jwtService.generateToken(
+    userData,
+    'JWT_ACCESS_SECRET',
+    '900s'
+  );
+  const refreshToken = jwtService.generateToken(
+    userData,
+    'JWT_REFRESH_SECRET',
+    '10000s'
+  );
+
+  await tokenService.save(user.id, refreshToken);
+
+  res.cookie(`refreshToken_${user.id}`, refreshToken, {
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    httpOnly: false,
+    sameSite: 'none',
+    secure: true,
+  });
+
+  return accessToken;
+} 
+
 const register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -128,26 +153,7 @@ const refresh = async (req, res) => {
 };
 
 const sendAuthentication = async (res, user) => {
-  const userData = userService.normalize(user);
-  const accessToken = jwtService.generateToken(
-    userData,
-    'JWT_ACCESS_SECRET',
-    '900s'
-  );
-  const refreshToken = jwtService.generateToken(
-    userData,
-    'JWT_REFRESH_SECRET',
-    '10000s'
-  );
-
-  await tokenService.save(user.id, refreshToken);
-
-  res.cookie(`refreshToken_${user.id}`, refreshToken, {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: false,
-    sameSite: 'none',
-    secure: true,
-  });
+  const accessToken = await prepareTokens(user);
 
   res.send({
     user: userData,
@@ -335,13 +341,11 @@ const authorizeWithGoogle = async (req, res) => {
     displayName
   );
 
-  await sendAuthentication(res, newUser);
+  const accessToken = await prepareTokens();
 
-  res.redirect('http://localhost:5173/authentication-app/#google-auth');
-
-  // res.redirect(
-  //   `http://localhost:5173/authentication-app/#google-auth/?message=Authenticated%20with%20google&id=${id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
-  // );
+  res.redirect(
+    `http://localhost:5173/authentication-app/#google-auth/?message=Authenticated%20with%20google&id=${newUser.id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
+  );
 };
 
 const logoutWithGoogle = async (req, res) => {
