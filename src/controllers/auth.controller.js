@@ -156,7 +156,7 @@ const sendAuthentication = async (res, user) => {
   const accessToken = await prepareTokens(user, res);
 
   res.send({
-    user: userData,
+    user: userService.normalize(user),
     accessToken,
   });
 };
