@@ -26,7 +26,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'https://auth-backend-hxdm.onrender.com/auth/google/callback',
+      callbackURL: 'http://auth-backend-hxdm.onrender.com/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
       const { name, email } = profile._json;

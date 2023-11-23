@@ -231,8 +231,9 @@ const updateName = async (req, res) => {
 const updatePassword = async (req, res) => {
   const { id } = req.params;
   const { oldPassword, newPassword, confirmation } = req.body;
+  const errors = {};
 
-  if (!oldPassword || !newPassword || !confirmation) {
+  if (!(oldPassword && newPassword && confirmation)) {
     throw ApiError.badRequest(
       'You need to provide old password, new password and confirmation!'
     );
@@ -243,25 +244,25 @@ const updatePassword = async (req, res) => {
   checkUserExistence(foundUser, id);
 
   if (!(await bcrypt.compare(oldPassword, foundUser.password))) {
-    throw ApiError.badRequest('Old Password is wrong!');
+    errors.oldPassword = 'Password is incorrect!';
   }
 
   if (newPassword === oldPassword) {
-    throw ApiError.badRequest(
-      'New password should be different from your old one!'
-    );
+    errors.newPassword = 'New password should be different from your old one!';
   }
 
   const passwordValidationError = validatePassword(newPassword);
 
   if (passwordValidationError) {
-    throw ApiError.badRequest('Validation error', {
-      newPassword: passwordValidationError,
-    });
+    errors.newPassword = passwordValidationError;
   }
 
   if (newPassword !== confirmation) {
-    throw ApiError.badRequest('The new password and confirmation do not match');
+    errors.confirmation = 'Passwords do not match; please check and try again'
+  }
+
+  if (errors.confirmation || errors.oldPassword || errors.newPassword) {
+    throw ApiError.badRequest('Validation error', errors);
   }
 
   await userService.updatePassword(foundUser, newPassword);
@@ -289,8 +290,7 @@ const sendEmailConfirmation = async (req, res) => {
   }
 
   if (email === foundUser.email) {
-    errors.email =
-      "'Your new email should be different from your current one!'";
+    errors.email = 'Your new email should be different from your current one!';
   }
 
   if (errors.password || errors.email) {
