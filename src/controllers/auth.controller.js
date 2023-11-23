@@ -46,7 +46,7 @@ const prepareTokens = async (user) => {
   });
 
   return accessToken;
-} 
+};
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -341,7 +341,7 @@ const authorizeWithGoogle = async (req, res) => {
     displayName
   );
 
-  const accessToken = await prepareTokens();
+  const accessToken = await prepareTokens(newUser);
 
   res.redirect(
     `http://localhost:5173/authentication-app/#google-auth/?message=Authenticated%20with%20google&id=${newUser.id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
