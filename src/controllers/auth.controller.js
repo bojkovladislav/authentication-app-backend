@@ -322,7 +322,7 @@ const updateEmail = async (req, res) => {
 };
 
 const authorizeWithGoogle = (req, res) => {
-  const { displayName, emails, accessToken } = req.user;
+  const { displayName, emails, accessToken, id } = req.user;
 
   if (!displayName || !emails || !accessToken) {
     throw ApiError.badRequest(
@@ -331,17 +331,8 @@ const authorizeWithGoogle = (req, res) => {
   }
 
   res.redirect(
-    `http://localhost:5173/authentication-app/?message=Authenticated%20with%20google&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
+    `http://localhost:5173/authentication-app/?message=Authenticated%20with%20google&id=${id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
   );
-
-  // res.status(200).send({
-  //   message: 'Authenticated with google!',
-  //   user: {
-  //     name: displayName,
-  //     email: emails[0].value,
-  //   },
-  //   accessToken,
-  // });
 };
 
 const logoutWithGoogle = async (req, res) => {

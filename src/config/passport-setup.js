@@ -52,7 +52,7 @@ passport.use(
 
         await tokenService.save(newUser.id, refreshToken);
 
-        Object.assign(profile, { accessToken });
+        Object.assign(profile, { accessToken, id: newUser.id });
 
         return done(null, profile);
       } catch (error) {
