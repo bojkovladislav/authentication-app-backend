@@ -321,18 +321,27 @@ const updateEmail = async (req, res) => {
   });
 };
 
-const authorizeWithGoogle = (req, res) => {
-  const { displayName, emails, accessToken, id } = req.user;
+const authorizeWithGoogle = async (req, res) => {
+  const { displayName, emails } = req.user;
 
-  if (!displayName || !emails || !accessToken) {
+  if (!displayName || !emails) {
     throw ApiError.badRequest(
       'Something went wrong! Try to authorize with google again'
     );
   }
 
-  res.redirect(
-    `http://localhost:5173/authentication-app/?message=Authenticated%20with%20google&id=${id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
+  const newUser = await userService.googleCreateNewUser(
+    emails[0].value,
+    displayName
   );
+
+  await sendAuthentication(res, newUser);
+
+  res.redirect('http://localhost:5173/authentication-app/#google-auth');
+
+  // res.redirect(
+  //   `http://localhost:5173/authentication-app/#google-auth/?message=Authenticated%20with%20google&id=${id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
+  // );
 };
 
 const logoutWithGoogle = async (req, res) => {

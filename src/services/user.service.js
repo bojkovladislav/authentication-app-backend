@@ -12,7 +12,7 @@ const {
 const { ApiError } = require('../exceptions/api.error.js');
 const { jwtService } = require('./jwt.service.js');
 
-const register = async(name, email, password) => {
+const register = async (name, email, password) => {
   const activationToken = v4();
   const existingUser = await getUserByEmail(email);
 
@@ -55,7 +55,7 @@ const normalize = ({ id, email, name }) => ({
   name,
 });
 
-const forgotPassword = async(res, email) => {
+const forgotPassword = async (res, email) => {
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
@@ -78,7 +78,7 @@ const forgotPassword = async(res, email) => {
   await sendResetLink(email, resetToken);
 };
 
-const resetPassword = async(resetToken, newPassword) => {
+const resetPassword = async (resetToken, newPassword) => {
   const decodedToken = jwtService.verifyToken(resetToken, 'JWT_RESET_SECRET');
 
   if (!decodedToken) {
@@ -101,13 +101,13 @@ const resetPassword = async(resetToken, newPassword) => {
   return foundUser;
 };
 
-const updateName = async(foundUser, updatedName) => {
+const updateName = async (foundUser, updatedName) => {
   foundUser.name = updatedName;
 
   await foundUser.save();
 };
 
-const updatePassword = async(foundUser, newPassword) => {
+const updatePassword = async (foundUser, newPassword) => {
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   foundUser.password = hashedPassword;
@@ -115,7 +115,7 @@ const updatePassword = async(foundUser, newPassword) => {
   await foundUser.save();
 };
 
-const sendEmailConfirmation = async(foundUser, email, res) => {
+const sendEmailConfirmation = async (foundUser, email, res) => {
   const confirmationToken = jwtService.generateToken(
     {
       userId: foundUser.id,
@@ -135,7 +135,7 @@ const sendEmailConfirmation = async(foundUser, email, res) => {
   await sendConfirmationEmail(foundUser.name, email, confirmationToken);
 };
 
-const updateEmail = async(confirmationToken) => {
+const updateEmail = async (confirmationToken) => {
   const decodedToken = jwtService.verifyToken(
     confirmationToken,
     'JWT_CONFIRMATION_SECRET'
@@ -166,6 +166,14 @@ const updateEmail = async(confirmationToken) => {
   return foundUser;
 };
 
+const googleCreateNewUser = async (email, name) => {
+  return User.create({
+    name,
+    email,
+    password: await bcrypt.hash('1234567', 10),
+  });
+};
+
 const userService = {
   getUserByEmail,
   getUserByActivationToken,
@@ -178,6 +186,7 @@ const userService = {
   updateEmail,
   updateName,
   updatePassword,
+  googleCreateNewUser,
   sendEmailConfirmation,
 };
 
