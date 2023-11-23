@@ -45,10 +45,12 @@ passport.use(
           }
         }
 
+        const hashedPassword = bcrypt.hash('1234567', 10);
+
         const newUser = await User.create({
           name,
           email,
-          password: bcrypt.hash('1234567', 10),
+          password: hashedPassword,
         });
 
         await tokenService.save(newUser.id, refreshToken);
