@@ -26,25 +26,25 @@ authRouter.patch(
 
 authRouter.patch(
   '/update-name/:id',
-  // catchError(authMiddleware),
+  catchError(authMiddleware),
   catchError(authController.updateName)
 );
 
 authRouter.patch(
   '/update-password/:id',
-  // catchError(authMiddleware),
+  catchError(authMiddleware),
   catchError(authController.updatePassword)
 );
 
 authRouter.post(
   '/send-confirmation-email/:id',
-  // catchError(authMiddleware),
+  catchError(authMiddleware),
   catchError(authController.sendEmailConfirmation)
 );
 
 authRouter.patch(
   '/update-email/:confirmationToken',
-  // catchError(authMiddleware),
+  catchError(authMiddleware),
   catchError(authController.updateEmail)
 );
 
