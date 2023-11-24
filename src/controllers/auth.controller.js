@@ -94,22 +94,20 @@ const login = async (req, res) => {
     throw ApiError.badRequest('Bad request');
   }
 
-  const errors = {};
-
   const foundUser = await userService.getUserByEmail(email);
 
   if (!foundUser) {
-    errors.email = 'User with this email does not exist!';
+    throw ApiError.badRequest('Validation error!', {
+      email: 'User with this email does not exist!',
+    });
   }
 
   const passwordsMatch = await bcrypt.compare(password, foundUser.password);
 
   if (!passwordsMatch) {
-    errors.password = 'Password is incorrect!';
-  }
-
-  if (errors.email || errors.password) {
-    throw ApiError.badRequest('Validation error', errors);
+    throw ApiError.badRequest('Validation error!', {
+      password: 'Password is incorrect!',
+    });
   }
 
   await sendAuthentication(res, foundUser);
