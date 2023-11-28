@@ -28,19 +28,18 @@ const prepareTokens = async (user, res) => {
   const accessToken = jwtService.generateToken(
     userData,
     'JWT_ACCESS_SECRET',
-    '900s'
+    '30m'
   );
   const refreshToken = jwtService.generateToken(
     userData,
     'JWT_REFRESH_SECRET',
-    '10000s'
+    `${30 * 24 * 60}m`
   );
 
   await tokenService.save(user.id, refreshToken);
 
   res.cookie(`refreshToken_${user.id}`, refreshToken, {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    httpOnly: false,
+    maxAge: 30 * 24 * 60 * 1000,
     sameSite: 'none',
     secure: true,
   });
@@ -115,36 +114,46 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   const { userId } = req.params;
-  const refreshToken = req.cookies[`refreshToken_${userId}`];
-  const userData = jwtService.verifyToken(refreshToken, 'JWT_REFRESH_SECRET');
 
-  if (userData) {
-    await tokenService.remove(userData.id);
-    res.clearCookie(`refreshToken_${userData.id}`);
-  } else {
-    throw ApiError.unAuthorized();
-  }
+  await tokenService.remove(userId);
+  res.clearCookie(`refreshToken_${userId}`);
 
   res.sendStatus(204);
 };
 
 const refresh = async (req, res) => {
-  const { refreshToken } = req.cookies;
+  const { oldAccessToken } = req.body;
+  const { userId } = req.params;
+  const refreshToken = req.cookies[`refreshToken_${userId}`];
+
   const userData = jwtService.verifyToken(refreshToken, 'JWT_REFRESH_SECRET');
+  const oldUserData = jwtService.verifyToken(
+    oldAccessToken,
+    'JWT_ACCESS_SECRET'
+  );
 
   if (!userData) {
     throw ApiError.unAuthorized();
   }
 
-  const token = await tokenService.getByToken(refreshToken);
-
-  if (!token) {
-    throw ApiError.unAuthorized();
+  if (oldUserData) {
+    throw ApiError.badRequest({
+      message: "You don't need to change your access token",
+    });
   }
 
-  const user = await userService.getUserByEmail(userData.email);
+  if (userData && !oldUserData) {
+    const newAccessToken = jwtService.generateToken(
+      userService.normalize(userData),
+      'JWT_ACCESS_SECRET',
+      '30s'
+    );
 
-  await sendAuthentication(res, user);
+    res.status(200).send({
+      message: 'Your new access token is ready to use!',
+      accessToken: newAccessToken,
+    });
+  }
 };
 
 const sendAuthentication = async (res, user) => {
@@ -219,7 +228,7 @@ const updateName = async (req, res) => {
   }
 
   if (updatedName === foundUser.name) {
-    throw ApiError.badRequest('No need to change your name!', {
+    throw ApiError.badRequest('Validation error!', {
       name: 'Your updated name is the same as the old one!',
     });
   }

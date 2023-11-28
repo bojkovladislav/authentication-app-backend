@@ -19,7 +19,7 @@ const { SESSION_SECRET } = process.env;
 
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:5173',
     credentials: true,
   })
 );
@@ -30,9 +30,9 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: {
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
-    }
+    },
   })
 );
 app.use(passport.initialize());
