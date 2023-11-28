@@ -167,10 +167,21 @@ const updateEmail = async (confirmationToken) => {
 };
 
 const googleCreateNewUser = async (email, name) => {
+  const user = await User.findOne({ email });
+  const hashedPassword = await bcrypt.hash('1234567', 10); 
+
+  if (user) {
+    return User.update({
+      name,
+      email,
+      password: hashedPassword,
+    });
+  }
+
   return User.create({
     name,
     email,
-    password: await bcrypt.hash('1234567', 10),
+    password: hashedPassword,
   });
 };
 
