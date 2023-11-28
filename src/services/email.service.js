@@ -26,7 +26,7 @@ function send({ email, subject, html }) {
 }
 
 function sendResetLink(email, token) {
-  const href = `${CLIENT_HOST}/authentication-app/#reset-password/${token}`;
+  const href = `${CLIENT_HOST}/#reset-password/${token}`;
 
   const html = `
   <!DOCTYPE html>

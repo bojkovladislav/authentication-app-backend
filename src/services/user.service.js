@@ -177,7 +177,7 @@ const googleCreateNewUser = async (email, name) => {
   };
 
   if (user) {
-    await User.update(newUser, { where: { email } });
+    await User.update({ name, email }, { where: { email } });
 
     return User.findOne({ where: { email } });
   }
