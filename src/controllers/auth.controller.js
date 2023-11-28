@@ -349,7 +349,7 @@ const authorizeWithGoogle = async (req, res) => {
   const accessToken = await prepareTokens(newUser, res);
 
   res.redirect(
-    `http://localhost:5173/authentication-app/#google-auth/?message=Authenticated%20with%20google&id=${newUser.id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
+    `${process.env.CLIENT_HOST}#google-auth/?message=Authenticated%20with%20google&id=${newUser.id}&name=${displayName}&email=${emails[0].value}&accessToken=${accessToken}`
   );
 };
 
