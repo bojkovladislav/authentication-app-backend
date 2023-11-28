@@ -42,6 +42,7 @@ const prepareTokens = async (user, res) => {
     maxAge: 30 * 24 * 60 * 1000,
     sameSite: 'none',
     secure: true,
+    httpOnly: true,
   });
 
   return accessToken;
