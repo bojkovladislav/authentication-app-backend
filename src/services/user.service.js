@@ -59,7 +59,9 @@ const forgotPassword = async (res, email) => {
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    throw ApiError.badRequest(`There's no registered user with email ${email}`);
+    throw ApiError.badRequest('Validation error!', {
+      email: `There's no registered user with email ${email}`,
+    });
   }
 
   const resetToken = jwtService.generateToken(

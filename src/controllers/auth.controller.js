@@ -369,12 +369,22 @@ const logoutWithGoogle = async (req, res) => {
   });
 };
 
+const validateAccessToken = async (req, res) => {
+  const decodedToken = jwtService.verifyToken(
+    req.params.token,
+    'JWT_ACCESS_SECRET'
+  );
+
+  res.status(200).send(decodedToken);
+};
+
 const authController = {
   register,
   activate,
   login,
   sendAuthentication,
   logout,
+  validateAccessToken,
   refresh,
   forgotPassword,
   resetPassword,

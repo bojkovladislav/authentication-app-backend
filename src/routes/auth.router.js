@@ -18,6 +18,10 @@ authRouter.post('/login', catchError(authController.login));
 authRouter.post('/logout/:userId', catchError(authController.logout));
 authRouter.post('/refresh/:userId', catchError(authController.refresh));
 authRouter.post('/forgot-password', catchError(authController.forgotPassword));
+authRouter.post(
+  '/validate-access-token/:token',
+  catchError(authController.validateAccessToken)
+);
 
 authRouter.patch(
   '/reset-password/:resetToken',
