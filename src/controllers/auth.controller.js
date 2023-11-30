@@ -89,25 +89,28 @@ const activate = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+  const errorMessage = 'Either your email or password are not correct!';
+  const validationError = ApiError.badRequest('Validation error!', {
+    email: errorMessage,
+    password: errorMessage,
+  });
 
   if (!email || !password) {
-    throw ApiError.badRequest('Bad request');
+    throw ApiError.badRequest(
+      'You should provide email and password in order to log in!'
+    );
   }
 
   const foundUser = await userService.getUserByEmail(email);
 
   if (!foundUser) {
-    throw ApiError.badRequest('Validation error!', {
-      email: 'User with this email does not exist!',
-    });
+    throw validationError;
   }
 
   const passwordsMatch = await bcrypt.compare(password, foundUser.password);
 
   if (!passwordsMatch) {
-    throw ApiError.badRequest('Validation error!', {
-      password: 'Password is incorrect!',
-    });
+    throw validationError;
   }
 
   await sendAuthentication(res, foundUser);

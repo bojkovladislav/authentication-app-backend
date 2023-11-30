@@ -26,7 +26,7 @@ function send({ email, subject, html }) {
 }
 
 function sendResetLink(email, token) {
-  const href = `${CLIENT_HOST}/#reset-password/${token}`;
+  const href = `${CLIENT_HOST}#reset-password/${token}`;
 
   const html = `
   <!DOCTYPE html>
@@ -54,13 +54,14 @@ function sendResetLink(email, token) {
     }
 
     a {
-      background-color: #4caf50;
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #007bff;
       color: #fff;
       text-decoration: none;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -90,7 +91,7 @@ function sendResetLink(email, token) {
 }
 
 function sendConfirmationEmail(name, email, token) {
-  const href = `${CLIENT_HOST}/#confirmation/${token}`;
+  const href = `${CLIENT_HOST}#confirmation/${token}`;
 
   const html = `
     <!DOCTYPE html>
@@ -132,7 +133,7 @@ function sendConfirmationEmail(name, email, token) {
 }
 
 function sendActivationEmail(name, email, token) {
-  const href = `${CLIENT_HOST}/#activate/${token}`;
+  const href = `${CLIENT_HOST}#activate/${token}`;
 
   const html = `
     <!DOCTYPE html>
@@ -181,7 +182,7 @@ function sendActivationEmail(name, email, token) {
         <p>
           Your account activation link is below. Click to activate your account:
         </p>
-        <a href="${href}" target="_blank">${href}</a>
+        <a href="${href}" target="_blank">Activate account</a>
       </div>
     </body>
     </html>

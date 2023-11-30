@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const { DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME } = process.env;
 
+// LOCALHOST SETUP
 // const sequelize = new Sequelize(
 //   DB_DATABASE_NAME,
 //   DB_USERNAME,
